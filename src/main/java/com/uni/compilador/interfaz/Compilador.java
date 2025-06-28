@@ -4,6 +4,11 @@
  */
 package com.uni.compilador.interfaz;
 
+import com.uni.compilador.analisis.lexico.AnalizadorLexico;
+import com.uni.compilador.analisis.lexico.ErrorLexico;
+import com.uni.compilador.analisis.lexico.Token;
+import java.util.List;
+
 /**
  *
  * @author Usuario
@@ -32,10 +37,11 @@ public class Compilador extends javax.swing.JFrame {
         cpnOutput = new javax.swing.JScrollPane();
         txtAreaOutput = new javax.swing.JTextArea();
         btnCompilar = new javax.swing.JButton();
-        cpnTokens = new javax.swing.JScrollPane();
-        txtAreaInput1 = new javax.swing.JTextArea();
-        cpnSimbolos = new javax.swing.JScrollPane();
-        txtAreaInput2 = new javax.swing.JTextArea();
+        cpnAnalisis = new javax.swing.JScrollPane();
+        txtAreaAnalisis = new javax.swing.JTextArea();
+        btnTokens = new javax.swing.JButton();
+        btnSimbolos = new javax.swing.JButton();
+        btnArbolSintactico = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -69,43 +75,74 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
 
-        cpnTokens.setViewportBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tabla de Tokens", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("JetBrains Mono", 0, 12))); // NOI18N
-        cpnTokens.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        cpnAnalisis.setViewportBorder(javax.swing.BorderFactory.createTitledBorder(null, "Analsis", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("JetBrains Mono", 0, 12))); // NOI18N
+        cpnAnalisis.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
 
-        txtAreaInput1.setColumns(20);
-        txtAreaInput1.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
-        txtAreaInput1.setRows(5);
-        cpnTokens.setViewportView(txtAreaInput1);
+        txtAreaAnalisis.setColumns(20);
+        txtAreaAnalisis.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        txtAreaAnalisis.setRows(5);
+        cpnAnalisis.setViewportView(txtAreaAnalisis);
 
-        cpnSimbolos.setViewportBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tabla de Simbolos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("JetBrains Mono", 0, 12))); // NOI18N
-        cpnSimbolos.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnTokens.setBackground(new java.awt.Color(102, 102, 102));
+        btnTokens.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnTokens.setForeground(new java.awt.Color(255, 255, 255));
+        btnTokens.setText("Tabla de tokens");
+        btnTokens.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTokensActionPerformed(evt);
+            }
+        });
 
-        txtAreaInput2.setColumns(20);
-        txtAreaInput2.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
-        txtAreaInput2.setRows(5);
-        cpnSimbolos.setViewportView(txtAreaInput2);
+        btnSimbolos.setBackground(new java.awt.Color(102, 102, 102));
+        btnSimbolos.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnSimbolos.setForeground(new java.awt.Color(255, 255, 255));
+        btnSimbolos.setText("Tabla de simbolos");
+        btnSimbolos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimbolosActionPerformed(evt);
+            }
+        });
+
+        btnArbolSintactico.setBackground(new java.awt.Color(102, 102, 102));
+        btnArbolSintactico.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnArbolSintactico.setForeground(new java.awt.Color(255, 255, 255));
+        btnArbolSintactico.setText("Arbol Sintactico");
+        btnArbolSintactico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnArbolSintacticoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cpnTokens, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cpnSimbolos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(462, 462, 462))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(3, 3, 3)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cpnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(btnSimbolos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnTokens, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnArbolSintactico, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(76, 76, 76))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,14 +150,21 @@ public class Compilador extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cpnTokens, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCompilar))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cpnSimbolos, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-                    .addComponent(cpnOutput))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCompilar))
+                        .addGap(18, 18, 18)
+                        .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnTokens)
+                            .addComponent(btnArbolSintactico))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSimbolos)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cpnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(28, 28, 28))
         );
 
@@ -128,8 +172,61 @@ public class Compilador extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
-        // TODO add your handling code here:
+        String codigoFuente = txtAreaInput.getText();
+        AnalizadorLexico analizador = new AnalizadorLexico(codigoFuente);
+        analizador.analizar();
+
+        // Mostrar tokens
+        List<Token> tokens = analizador.getTokens();
+        String tabla = formatearTokensComoTabla(tokens);
+        txtAreaAnalisis.setText(tabla); // Mostrar tokens
+
+        // Mostrar errores léxicos
+        List<ErrorLexico> errores = analizador.getErrores();
+        String textoErrores = formatearErroresComoTexto(errores);
+        txtAreaOutput.setText(textoErrores); // Mostrar errores en otro JTextArea
     }//GEN-LAST:event_btnCompilarActionPerformed
+
+    private String formatearTokensComoTabla(List<Token> tokens) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%-21s%-16s%-10s%-10s\n", "Tipo", "Valor", "Línea", "Columna"));
+        sb.append("-------------------------------------------------------\n");
+
+        for (Token token : tokens) {
+            sb.append(String.format("%-21s%-16s%-10d%-10d\n",
+                    token.getTipo(),
+                    token.getValor(),
+                    token.getLinea(),
+                    token.getColumna()));
+        }
+
+        return sb.toString();
+    }
+
+    private String formatearErroresComoTexto(List<ErrorLexico> errores) {
+        if (errores.isEmpty()) {
+            return "No se encontraron errores léxicos.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (ErrorLexico error : errores) {
+            sb.append(error.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+
+    private void btnTokensActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTokensActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnTokensActionPerformed
+
+    private void btnSimbolosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimbolosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSimbolosActionPerformed
+
+    private void btnArbolSintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArbolSintacticoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnArbolSintacticoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -167,15 +264,16 @@ public class Compilador extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnArbolSintactico;
     private javax.swing.JButton btnCompilar;
+    private javax.swing.JButton btnSimbolos;
+    private javax.swing.JButton btnTokens;
+    private javax.swing.JScrollPane cpnAnalisis;
     private javax.swing.JScrollPane cpnInput;
     private javax.swing.JScrollPane cpnOutput;
-    private javax.swing.JScrollPane cpnSimbolos;
-    private javax.swing.JScrollPane cpnTokens;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextArea txtAreaAnalisis;
     private javax.swing.JTextArea txtAreaInput;
-    private javax.swing.JTextArea txtAreaInput1;
-    private javax.swing.JTextArea txtAreaInput2;
     private javax.swing.JTextArea txtAreaOutput;
     // End of variables declaration//GEN-END:variables
 }
