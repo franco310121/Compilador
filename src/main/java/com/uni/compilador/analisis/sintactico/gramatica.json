@@ -1,0 +1,66 @@
+{
+  "programa": [["score", "bloquePrincipal"]],
+  "bloquePrincipal": [["start", "listaInstrucciones", "end"]],
+  "listaInstrucciones": [
+    ["instruccion", "listaInstrucciones"],
+    ["instruccion"],
+    []
+  ],
+
+  "instruccion": [
+    ["declaracion"],
+    ["asignacion"],
+    ["impresion"],
+    ["lectura"],
+    ["condicional"],
+    ["bucle"],
+    ["llamadaFuncion"],
+    ["retorno"]
+  ],
+
+  "declaracion": [["note", "tipo", "IDENTIFICADOR"]],
+  "tipo": [["number"], ["text"], ["logic"], ["list"]],
+
+  "asignacion": [["tune", "IDENTIFICADOR", "=", "expresion"]],
+
+  "impresion": [["play", "expresion"]],
+  "lectura": [["listen", "IDENTIFICADOR"]],
+
+  "condicional": [["when", "(", "expresion", ")", "bloque", "opcionalSino"]],
+  "opcionalSino": [["otherwise", "bloque"], []],
+
+  "bucle": [["loop", "(", "expresion", ")", "bloque"]],
+
+  "bloque": [["start", "listaInstrucciones", "end"]],
+
+  "llamadaFuncion": [["call", "IDENTIFICADOR", "(", "listaArgumentos", ")"]],
+  "listaArgumentos": [["expresion", "restoArgumentos"], []],
+  "restoArgumentos": [[",", "expresion", "restoArgumentos"], []],
+
+  "retorno": [["give", "expresion"]],
+
+  "expresion": [
+    ["expresionSimple", "operadorLogico", "expresion"],
+    ["expresionSimple"]
+  ],
+
+  "expresionSimple": [
+    ["expPrimaria", "operadorAritmetico", "expresionSimple"],
+    ["expPrimaria"]
+  ],
+
+  "expPrimaria": [
+    ["(", "expresion", ")"],
+    ["operadorNot", "expPrimaria"],
+    ["IDENTIFICADOR"],
+    ["NUMERO"],
+    ["CADENA"],
+    ["yes"],
+    ["no"]
+  ]
+,
+
+  "operadorAritmetico": [["+"], ["-"], ["*"], ["/"]],
+  "operadorLogico": [["and"], ["or"]],
+  "operadorNot": [["not"]]
+}

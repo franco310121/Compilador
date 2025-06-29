@@ -68,7 +68,7 @@ public class AnalizadorLexico {
             Map.entry("/=", TipoToken.OPERADOR_ASIGNACION),
 
             // Otros operadores posibles
-            Map.entry(".", TipoToken.SIMBOLO)  // Acceso a propiedad o método
+            Map.entry(".", TipoToken.SIMBOLO)
     );
 
     private static final Map<Character, TipoToken> SIMBOLOS = Map.ofEntries(
