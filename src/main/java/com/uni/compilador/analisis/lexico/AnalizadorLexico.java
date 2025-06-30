@@ -23,7 +23,7 @@ public class AnalizadorLexico {
             "when", "otherwise", "loop", "break", "continue",
 
             // Funciones
-            "theme", "give", "call",
+            "func", "theme", "give", "call",
 
             // Estructura de bloques
             "start", "end",
@@ -68,6 +68,7 @@ public class AnalizadorLexico {
             Map.entry("/=", TipoToken.OPERADOR_ASIGNACION),
 
             // Otros operadores posibles
+            Map.entry("->", TipoToken.FLECHA),
             Map.entry(".", TipoToken.SIMBOLO)
     );
 

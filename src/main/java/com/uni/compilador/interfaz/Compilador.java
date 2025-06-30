@@ -7,6 +7,8 @@ package com.uni.compilador.interfaz;
 import com.uni.compilador.analisis.lexico.AnalizadorLexico;
 import com.uni.compilador.analisis.lexico.ErrorLexico;
 import com.uni.compilador.analisis.lexico.Token;
+import com.uni.compilador.analisis.semantico.AnalizadorSemantico;
+import com.uni.compilador.analisis.semantico.EntradaTablaSimbolos;
 import com.uni.compilador.analisis.sintactico.ASTPrinter;
 import com.uni.compilador.analisis.sintactico.ErrorSintactico;
 import com.uni.compilador.analisis.sintactico.LectorGramatica;
@@ -129,43 +131,72 @@ public class Compilador extends javax.swing.JFrame {
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
         String codigoFuente = txtAreaInput.getText();
-    AnalizadorLexico analizador = new AnalizadorLexico(codigoFuente);
-    analizador.analizar();
+        AnalizadorLexico analizador = new AnalizadorLexico(codigoFuente);
+        analizador.analizar();
 
-    List<Token> tokens = analizador.getTokens();
-    String tabla = formatearTokensComoTabla(tokens);
-    txtAreaAnalisis.setText(tabla); // Mostrar tokens
+        List<Token> tokens = analizador.getTokens();
+        String tabla = formatearTokensComoTabla(tokens);
+        txtAreaAnalisis.setText(tabla); // Mostrar tokens
 
-    List<ErrorLexico> errores = analizador.getErrores();
-    String textoErrores = formatearErroresComoTexto(errores);
-    txtAreaOutput.setText(textoErrores); // Mostrar errores léxicos
+        List<ErrorLexico> errores = analizador.getErrores();
+        String textoErrores = formatearErroresComoTexto(errores);
+        txtAreaOutput.setText(textoErrores); // Mostrar errores léxicos
 
-    // Solo continuar si no hay errores léxicos
-    if (errores.isEmpty()) {
-        try {
-            // Cargar gramática desde archivo JSON
-            Map<String, Regla> gramatica = LectorGramatica.cargarDesdeArchivo("src/main/java/com/uni/compilador/analisis/sintactico/gramatica.json");
+        // Solo continuar si no hay errores léxicos
+        if (errores.isEmpty()) {
+            try {
+                // Cargar gramática desde archivo JSON
+                Map<String, Regla> gramatica = LectorGramatica.cargarDesdeArchivo("src/main/java/com/uni/compilador/analisis/sintactico/gramatica.json");
 
-            ParserAST parser = new ParserAST(gramatica, tokens);
-            NodoAST arbol = parser.parse("programa");
+                ParserAST parser = new ParserAST(gramatica, tokens);
+                NodoAST arbol = parser.parse("programa");
 
-            if (arbol != null) {
-                String arbolTexto = ASTPrinter.imprimir(arbol);
-                txtAreaOutput.append("Análisis sintáctico exitoso.\n\n" );
-                txtAreaAnalisis.append("\n[AST - Arbol de Sintaxis Abstracta]\n");
-                txtAreaAnalisis.append(arbolTexto);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (ErrorSintactico error : parser.getErrores()) {
-                    sb.append(error.toString()).append("\n");
+                if (arbol != null) {
+                    String arbolTexto = ASTPrinter.imprimir(arbol);
+                    txtAreaOutput.append("No se encontraron errores sintacticos.\n");
+                    txtAreaAnalisis.append("-------------------------------------------------------");
+                    txtAreaAnalisis.append("\n[AST - Arbol de Sintaxis Abstracta]\n");
+                    txtAreaAnalisis.append(arbolTexto);
+
+                    //Analizador semantico
+                    try {
+                        AnalizadorSemantico semantico = new AnalizadorSemantico();
+                        semantico.analizar(arbol);
+
+                        // Mostrar tabla
+                        txtAreaAnalisis.append("------------------ TABLA DE SIMBOLOS -------------------\n");
+                        txtAreaAnalisis.append(String.format("%-12s %-8s %-10s %-7s %-6s %s\n",
+                                "Nombre", "Tipo", "Categoria", "Alcance", "Linea", "Valor"));
+                        txtAreaAnalisis.append("--------------------------------------------------------\n");
+                        for (EntradaTablaSimbolos entrada : semantico.getTabla()) {
+                            txtAreaAnalisis.append(entrada.toString() + "\n");
+                        }
+
+                        // Mostrar errores
+                        if (semantico.getErrores().isEmpty()){
+                            txtAreaOutput.append("No se encontraron errores semanticos.\n");
+                        } else {
+                            for (String error : semantico.getErrores()) {
+                            txtAreaOutput.append("[Error] " + error + "\n");
+                        }
+                        }
+                        
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    for (ErrorSintactico error : parser.getErrores()) {
+                        sb.append(error.toString()).append("\n");
+                    }
+                    txtAreaOutput.setText(sb.toString());
                 }
-                txtAreaOutput.setText(sb.toString());
-            }
 
-        } catch (Exception e) {
-            txtAreaOutput.setText("Error al cargar la gramática: " + e.getMessage());
+            } catch (Exception e) {
+                txtAreaOutput.setText("Error al cargar la gramática: " + e.getMessage());
+            }
         }
-    }
     }//GEN-LAST:event_btnCompilarActionPerformed
 
     private String formatearTokensComoTabla(List<Token> tokens) {
@@ -196,7 +227,6 @@ public class Compilador extends javax.swing.JFrame {
         }
         return sb.toString();
     }
-
 
     /**
      * @param args the command line arguments

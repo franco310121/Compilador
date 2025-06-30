@@ -13,7 +13,7 @@ public enum TipoToken {
 
     SIMBOLO,
     CADENA,
-    COMENTARIO,
+    FLECHA,
     FIN_ARCHIVO,
     DESCONOCIDO
 }

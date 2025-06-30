@@ -54,7 +54,10 @@ public class ParserAST {
                     if (posicion < tokens.size()) {
                         Token actual = tokens.get(posicion);
                         if (simbolo.equals(actual.getValor()) || simbolo.equals(actual.getTipo().name())) {
-                            hijos.add(new NodoAST(actual.getValor()));
+                            String etiquetaHoja = actual.getTipo().name().equals("CADENA")
+                                    ? "\"" + actual.getValor() + "\""        // conserva comillas
+                                    : actual.getValor();
+                            hijos.add(new NodoAST(etiquetaHoja));
                             posicion++;
                         } else {
                             registrarMejorError(posicion, simbolo);

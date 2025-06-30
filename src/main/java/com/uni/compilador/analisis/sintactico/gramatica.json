@@ -1,6 +1,10 @@
 {
-  "programa": [["score", "bloquePrincipal"]],
+  "programa": [["listaFunciones", "score", "bloquePrincipal"]],
+  "listaFunciones": [["funcion", "listaFunciones"], []],
+
+
   "bloquePrincipal": [["start", "listaInstrucciones", "end"]],
+
   "listaInstrucciones": [
     ["instruccion", "listaInstrucciones"],
     ["instruccion"],
@@ -17,6 +21,14 @@
     ["llamadaFuncion"],
     ["retorno"]
   ],
+
+  "funcion": [["func", "IDENTIFICADOR", "(", "listaParametros", ")", "flechaTipo", "bloque"]],
+
+  "listaParametros": [["parametro", "restoParametros"], []],
+  "parametro": [["IDENTIFICADOR", "tipo"]],
+  "restoParametros": [[",", "parametro", "restoParametros"], []],
+
+  "flechaTipo": [["->", "tipo"]],
 
   "declaracion": [["note", "tipo", "IDENTIFICADOR"]],
   "tipo": [["number"], ["text"], ["logic"], ["list"]],
@@ -52,6 +64,7 @@
   "expPrimaria": [
     ["(", "expresion", ")"],
     ["operadorNot", "expPrimaria"],
+    ["llamadaFuncion"],
     ["IDENTIFICADOR"],
     ["NUMERO"],
     ["CADENA"],
