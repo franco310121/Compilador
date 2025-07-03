@@ -48,6 +48,8 @@ public class Compilador extends javax.swing.JFrame {
         btnCompilar = new javax.swing.JButton();
         cpnAnalisis = new javax.swing.JScrollPane();
         txtAreaAnalisis = new javax.swing.JTextArea();
+        cpnArbol = new javax.swing.JScrollPane();
+        txtAreaArbol = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -89,40 +91,63 @@ public class Compilador extends javax.swing.JFrame {
         txtAreaAnalisis.setRows(5);
         cpnAnalisis.setViewportView(txtAreaAnalisis);
 
+        cpnArbol.setViewportBorder(javax.swing.BorderFactory.createTitledBorder(null, "Analsis", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("JetBrains Mono", 0, 12))); // NOI18N
+        cpnArbol.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+
+        txtAreaArbol.setColumns(20);
+        txtAreaArbol.setFont(new java.awt.Font("JetBrains Mono", 0, 10)); // NOI18N
+        txtAreaArbol.setRows(5);
+        cpnArbol.setViewportView(txtAreaArbol);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
-                .addComponent(cpnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(462, 462, 462))
+                        .addGap(313, 313, 313)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
+                                .addComponent(cpnInput)
+                                .addGap(15, 15, 15))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(139, 139, 139)
+                                .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(cpnOutput)
+                                .addGap(18, 18, 18)))
+                        .addComponent(cpnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)))
+                .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(15, Short.MAX_VALUE)
+                        .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 828, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addComponent(jLabel1)
+                        .addGap(53, 53, 53)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnCompilar))
-                        .addGap(18, 18, 18)
-                        .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cpnAnalisis))
+                            .addComponent(cpnAnalisis)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(60, 60, 60)
+                                .addComponent(btnCompilar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(19, 19, 19)))))
                 .addGap(28, 28, 28))
         );
 
@@ -154,9 +179,8 @@ public class Compilador extends javax.swing.JFrame {
                 if (arbol != null) {
                     String arbolTexto = ASTPrinter.imprimir(arbol);
                     txtAreaOutput.append("No se encontraron errores sintacticos.\n");
-                    txtAreaAnalisis.append("-------------------------------------------------------");
-                    txtAreaAnalisis.append("\n[AST - Arbol de Sintaxis Abstracta]\n");
-                    txtAreaAnalisis.append(arbolTexto);
+                    txtAreaArbol.setText("\n[AST - Arbol de Sintaxis Abstracta]\n");
+                    txtAreaArbol.append(arbolTexto);
 
                     //Analizador semantico
                     try {
@@ -266,10 +290,12 @@ public class Compilador extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCompilar;
     private javax.swing.JScrollPane cpnAnalisis;
+    private javax.swing.JScrollPane cpnArbol;
     private javax.swing.JScrollPane cpnInput;
     private javax.swing.JScrollPane cpnOutput;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextArea txtAreaAnalisis;
+    private javax.swing.JTextArea txtAreaArbol;
     private javax.swing.JTextArea txtAreaInput;
     private javax.swing.JTextArea txtAreaOutput;
     // End of variables declaration//GEN-END:variables
