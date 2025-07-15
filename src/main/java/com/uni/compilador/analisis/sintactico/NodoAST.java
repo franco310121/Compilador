@@ -23,4 +23,25 @@ public class NodoAST {
 
     @Override
     public String toString() { return etiqueta; }
+
+    public String getValor() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getValor'");
+    }
+
+    public String getNombreReal() {
+        // Si es hoja y no es "identificador", devuelve la etiqueta
+        if (getHijos().isEmpty() && !getEtiqueta().equals("identificador")) {
+            return getEtiqueta();
+        }
+        // Si tiene hijos, busca el primer hijo hoja que no sea "identificador"
+        for (NodoAST hijo : getHijos()) {
+            String nombre = hijo.getNombreReal();
+            if (!nombre.equals("identificador")) {
+                return nombre;
+            }
+        }
+        // Si no encuentra nada mejor, devuelve la etiqueta
+        return getEtiqueta();
+    }
 }

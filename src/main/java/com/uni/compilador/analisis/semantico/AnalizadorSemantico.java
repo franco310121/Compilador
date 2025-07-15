@@ -4,6 +4,7 @@ import com.uni.compilador.analisis.sintactico.NodoAST;
 import java.util.*;
 
 public class AnalizadorSemantico {
+
     private final List<EntradaTablaSimbolos> tabla = new ArrayList<>();
     private final Map<String, FuncionDefinida> funciones = new HashMap<>();
     private final List<String> errores = new ArrayList<>();
@@ -24,23 +25,34 @@ public class AnalizadorSemantico {
     }
 
     private void recorrer(NodoAST nodo) {
-        if (nodo == null) return;
+        if (nodo == null) {
+            return;
+        }
 
         switch (nodo.getEtiqueta()) {
-            case "declaracion" -> manejarDeclaracion(nodo);
-            case "asignacion" -> manejarAsignacion(nodo);
-            case "condicional", "bucle" -> manejarControl(nodo);
-            case "llamadaFuncion" -> manejarLlamadaFuncion(nodo);
-            case "retorno" -> manejarRetorno(nodo);
-            case "impresion" -> manejarImpresion(nodo);
-            case "lectura" -> manejarLectura(nodo);
-            case "funcion" -> manejarDefinicionFuncion(nodo);
+            case "declaracion" ->
+                manejarDeclaracion(nodo);
+            case "asignacion" ->
+                manejarAsignacion(nodo);
+            case "condicional", "bucle" ->
+                manejarControl(nodo);
+            case "llamadaFuncion" ->
+                manejarLlamadaFuncion(nodo);
+            case "retorno" ->
+                manejarRetorno(nodo);
+            case "impresion" ->
+                manejarImpresion(nodo);
+            case "lectura" ->
+                manejarLectura(nodo);
+            case "funcion" ->
+                manejarDefinicionFuncion(nodo);
             case "bloque", "bloquePrincipal" -> {
                 alcanceActual++;
                 nodo.getHijos().forEach(this::recorrer);
                 alcanceActual--;
             }
-            default -> nodo.getHijos().forEach(this::recorrer);
+            default ->
+                nodo.getHijos().forEach(this::recorrer);
         }
     }
 
@@ -52,11 +64,7 @@ public class AnalizadorSemantico {
 
         if (tipoNodo.getEtiqueta().equals("flechaTipo") && tipoNodo.getHijos().size() == 2) {
             NodoAST tipoReal = tipoNodo.getHijos().get(1);
-            if (!tipoReal.getHijos().isEmpty()) {
-                tipoRetorno = tipoReal.getHijos().get(0).getEtiqueta();
-            } else {
-                tipoRetorno = tipoReal.getEtiqueta();
-            }
+            tipoRetorno = tipoReal.getHijos().isEmpty() ? tipoReal.getEtiqueta() : tipoReal.getHijos().get(0).getEtiqueta();
         }
 
         List<String> tiposParametros = extraerTiposParametros(parametrosNodo);
@@ -68,6 +76,7 @@ public class AnalizadorSemantico {
 
         funciones.put(nombre, new FuncionDefinida(nombre, tipoRetorno, tiposParametros));
 
+        // Registrar variables parámetros en la tabla
         dentroDeFuncion.push(nombre);
         alcanceActual++;
         registrarParametros(parametrosNodo);
@@ -78,7 +87,9 @@ public class AnalizadorSemantico {
 
     private List<String> extraerTiposParametros(NodoAST nodo) {
         List<String> tipos = new ArrayList<>();
-        if (nodo == null) return tipos;
+        if (nodo == null) {
+            return tipos;
+        }
 
         if (nodo.getEtiqueta().equals("parametro")) {
             tipos.add(nodo.getHijos().get(1).getHijos().get(0).getEtiqueta());
@@ -87,12 +98,13 @@ public class AnalizadorSemantico {
                 tipos.addAll(extraerTiposParametros(hijo));
             }
         }
-
         return tipos;
     }
 
     private void registrarParametros(NodoAST nodo) {
-        if (nodo == null) return;
+        if (nodo == null) {
+            return;
+        }
 
         if (nodo.getEtiqueta().equals(",")) {
             nodo.getHijos().forEach(this::registrarParametros);
@@ -115,7 +127,6 @@ public class AnalizadorSemantico {
         if (yaExisteEnAmbito(nombre, alcanceActual)) {
             errores.add("Variable '" + nombre + "' ya declarada en este ámbito.");
         }
-
         tabla.add(new EntradaTablaSimbolos(nombre, tipo, "variable", alcanceActual, 0, null));
     }
 
@@ -146,19 +157,22 @@ public class AnalizadorSemantico {
     }
 
     private void manejarControl(NodoAST nodo) {
-        if (nodo.getHijos().size() < 3) return;
+        if (nodo.getHijos().size() < 3) {
+            return;
+        }
         NodoAST condicion = nodo.getHijos().get(2);
         String tipo = inferirTipo(condicion);
         if (!tipo.equals("logic")) {
             errores.add(String.format("Condición inválida en '%s': se esperaba 'logic' pero se encontró '%s'.",
                     nodo.getEtiqueta(), tipo));
         }
-
         nodo.getHijos().forEach(this::recorrer);
     }
 
     private void manejarLlamadaFuncion(NodoAST nodo) {
-        if (nodo.getHijos().size() < 4) return;
+        if (nodo.getHijos().size() < 4) {
+            return;
+        }
         String nombreFunc = nodo.getHijos().get(1).getEtiqueta();
         NodoAST listaArgs = nodo.getHijos().get(3);
 
@@ -171,11 +185,14 @@ public class AnalizadorSemantico {
         List<String> reales = obtenerTiposArgumentos(listaArgs);
         List<String> esper = fn.getTiposParametros();
 
+        // AQUÍ SE VERIFICA LA CANTIDAD
         if (reales.size() != esper.size()) {
-            errores.add("Cantidad incorrecta de argumentos en '" + nombreFunc + "'.");
+            errores.add("Cantidad incorrecta de argumentos en '" + nombreFunc + "'. Se esperaban "
+                    + esper.size() + " pero se recibieron " + reales.size() + ".");
             return;
         }
 
+        // Verificar tipos uno a uno
         for (int i = 0; i < reales.size(); i++) {
             if (!esTipoCompatible(esper.get(i), reales.get(i))) {
                 errores.add(String.format("Tipo de argumento %d inválido en '%s': se esperaba '%s', se encontró '%s'.",
@@ -186,31 +203,55 @@ public class AnalizadorSemantico {
 
     private List<String> obtenerTiposArgumentos(NodoAST nodo) {
         List<String> tipos = new ArrayList<>();
-        recolectarTiposArgs(nodo, tipos);
+        if (nodo == null) {
+            return tipos;
+        }
+
+        // Recorremos TODOS los hijos y recogemos solo los que son expresiones primarias o literales
+        Queue<NodoAST> cola = new LinkedList<>();
+        cola.add(nodo);
+
+        while (!cola.isEmpty()) {
+            NodoAST actual = cola.poll();
+
+            // Un argumento válido: literal, variable, llamada a función
+            if (esNodoArgumento(actual)) {
+                tipos.add(inferirTipo(actual));
+            }
+
+            // Seguir recorriendo
+            for (NodoAST hijo : actual.getHijos()) {
+                cola.add(hijo);
+            }
+        }
         return tipos;
     }
 
-    private void recolectarTiposArgs(NodoAST nodo, List<String> tipos) {
-        if (nodo == null) return;
+    private boolean esNodoArgumento(NodoAST nodo) {
+        if (nodo == null) {
+            return false;
+        }
+        String et = nodo.getEtiqueta();
 
-        if (nodo.getEtiqueta().equals(",")) {
-            for (NodoAST hijo : nodo.getHijos()) {
-                recolectarTiposArgs(hijo, tipos);
+        // Literal o variable
+        if (nodo.getHijos().isEmpty()) {
+            return et.matches("-?\\d+(\\.\\d+)?") || et.matches("\".*\"") || et.equals("yes") || et.equals("no") || buscarVariable(et) != null;
+        }
+
+        // Expresión primaria directa
+        if (et.equals("expPrimaria") || et.equals("expresionSimple") || et.equals("expresion")) {
+            // Si solo tiene un hijo, es un argumento directo
+            if (nodo.getHijos().size() == 1 && nodo.getHijos().get(0).getHijos().isEmpty()) {
+                return true;
             }
-            return;
         }
 
-        if (nodo.getEtiqueta().startsWith("exp") || nodo.getHijos().isEmpty()) {
-            String tipo = inferirTipo(nodo);
-            if (!tipo.equals("unknown")) {
-                tipos.add(tipo);
-            }
-            return;
+        // Llamada a función como argumento
+        if (et.equals("llamadaFuncion")) {
+            return true;
         }
 
-        for (NodoAST hijo : nodo.getHijos()) {
-            recolectarTiposArgs(hijo, tipos);
-        }
+        return false;
     }
 
     private void manejarImpresion(NodoAST nodo) {
@@ -240,52 +281,71 @@ public class AnalizadorSemantico {
         String real = inferirTipo(nodo.getHijos().get(1));
 
         if (!esTipoCompatible(esperado, real)) {
-            errores.add("Tipo de retorno incompatible en '" + funcion +
-                    "': se esperaba '" + esperado + "', se encontró '" + real + "'.");
+            errores.add("Tipo de retorno incompatible en '" + funcion
+                    + "': se esperaba '" + esperado + "', se encontró '" + real + "'.");
         }
     }
 
     private String inferirTipo(NodoAST n) {
-        if (n == null) return "unknown";
+        if (n == null) {
+            return "unknown";
+        }
 
-        if (Set.of("restoArgumentos", "listaArgumentos", ",").contains(n.getEtiqueta())) {
+        if (n.getEtiqueta().equals("expPrimaria") && n.getHijos().size() == 3
+                && (n.getHijos().get(0).getEtiqueta().equals("(") || n.getHijos().get(0).getEtiqueta().equals("token_abrir"))
+                && (n.getHijos().get(2).getEtiqueta().equals(")") || n.getHijos().get(2).getEtiqueta().equals("token_cerrar"))) {
+            return inferirTipo(n.getHijos().get(1));
+        }
+
+        if (n.getEtiqueta().equals("expPrimaria") && n.getHijos().size() == 1) {
+            return inferirTipo(n.getHijos().get(0));
+        }
+
+        if (n.getHijos().isEmpty()) {
+            String val = n.getEtiqueta();
+            if (val.matches("-?\\d+(\\.\\d+)?")) {
+                return "number";
+            }
+            if (val.matches("\".*\"")) {
+                return "text";
+            }
+            if (val.equals("yes") || val.equals("no")) {
+                return "logic";
+            }
+            if (val.startsWith("[") && val.endsWith("]")) {
+                return "list";
+            }
+            EntradaTablaSimbolos v = buscarVariable(val);
+            if (v != null) {
+                return v.getTipo();
+            }
             return "unknown";
         }
 
         if (n.getEtiqueta().equals("llamadaFuncion")) {
             String nombreFunc = n.getHijos().get(1).getEtiqueta();
             FuncionDefinida f = funciones.get(nombreFunc);
-            if (f != null) return f.getTipoRetorno();
-            errores.add("Función '" + nombreFunc + "' no está definida.");
-            return "unknown";
-        }
-
-        if (n.getHijos().isEmpty()) {
-            String t = n.getEtiqueta();
-            if (t.matches("-?\\d+(\\.\\d+)?")) return "number";
-            if (t.matches("\".*\"")) return "text";
-            if (t.equals("yes") || t.equals("no")) return "logic";
-            if (t.startsWith("[") && t.endsWith("]")) return "list";
-            EntradaTablaSimbolos v = buscarVariable(t);
-            if (v != null) return v.getTipo();
-            errores.add("Variable '" + t + "' no ha sido declarada.");
-            return "unknown";
-        }
-
-        if (n.getEtiqueta().equals("expresion") || n.getEtiqueta().equals("expresionSimple")) {
-            String tipoIzq = inferirTipo(n.getHijos().get(0));
-            if (n.getHijos().size() == 1) return tipoIzq;
-            String tipoDer = inferirTipo(n.getHijos().get(2));
-            String op = n.getHijos().get(1).getEtiqueta();
-            if (esOperadorLogico(op)) return "logic";
-            if (esOperadorAritmetico(op) && tipoIzq.equals("number") && tipoDer.equals("number")) {
-                return "number";
+            if (f != null) {
+                return f.getTipoRetorno();
             }
             return "unknown";
         }
 
-        if (n.getEtiqueta().equals("(") && n.getHijos().size() == 1) {
-            return inferirTipo(n.getHijos().get(0));
+        if (n.getEtiqueta().equals("expresion") || n.getEtiqueta().equals("expresionSimple")) {
+            if (n.getHijos().size() == 1) {
+                return inferirTipo(n.getHijos().get(0));
+            }
+            String tipoIzq = inferirTipo(n.getHijos().get(0));
+            NodoAST opNodo = n.getHijos().get(1);
+            String op = opNodo.getHijos().isEmpty() ? opNodo.getEtiqueta() : opNodo.getHijos().get(0).getEtiqueta();
+            String tipoDer = inferirTipo(n.getHijos().get(2));
+            if (esOperadorLogico(op)) {
+                return "logic";
+            }
+            if (esOperadorAritmetico(op) && tipoIzq.equals("number") && tipoDer.equals("number")) {
+                return "number";
+            }
+            return "unknown";
         }
 
         if (n.getHijos().size() == 1) {
@@ -310,7 +370,9 @@ public class AnalizadorSemantico {
     private EntradaTablaSimbolos buscarVariable(String nombre) {
         for (int i = alcanceActual; i >= 0; i--) {
             for (EntradaTablaSimbolos e : tabla) {
-                if (e.getNombre().equals(nombre) && e.getAlcance() == i) return e;
+                if (e.getNombre().equals(nombre) && e.getAlcance() == i) {
+                    return e;
+                }
             }
         }
         return null;
@@ -321,9 +383,15 @@ public class AnalizadorSemantico {
     }
 
     private String obtenerValorLiteral(NodoAST n) {
-        if (n == null) return null;
-        if (n.getHijos().isEmpty()) return n.getEtiqueta();
-        if (n.getHijos().size() == 1) return obtenerValorLiteral(n.getHijos().get(0));
+        if (n == null) {
+            return null;
+        }
+        if (n.getHijos().isEmpty()) {
+            return n.getEtiqueta();
+        }
+        if (n.getHijos().size() == 1) {
+            return obtenerValorLiteral(n.getHijos().get(0));
+        }
         return null;
     }
 

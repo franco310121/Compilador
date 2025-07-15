@@ -4,6 +4,9 @@
  */
 package com.uni.compilador.interfaz;
 
+import com.uni.compilador.analisis.backend.GeneradorCodigoIntermedio;
+import com.uni.compilador.analisis.backend.TacGenerator;
+import com.uni.compilador.analisis.backend.TacOptimizer;
 import com.uni.compilador.analisis.lexico.AnalizadorLexico;
 import com.uni.compilador.analisis.lexico.ErrorLexico;
 import com.uni.compilador.analisis.lexico.Token;
@@ -113,16 +116,17 @@ public class Compilador extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(28, 28, 28)
-                                .addComponent(cpnInput)
-                                .addGap(15, 15, 15))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(139, 139, 139)
-                                .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(cpnInput, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
+                                        .addGap(15, 15, 15))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(cpnOutput)
-                                .addGap(18, 18, 18)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                         .addComponent(cpnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)))
                 .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -133,7 +137,7 @@ public class Compilador extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(15, Short.MAX_VALUE)
+                        .addContainerGap(27, Short.MAX_VALUE)
                         .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 828, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(52, 52, 52)
@@ -143,11 +147,11 @@ public class Compilador extends javax.swing.JFrame {
                             .addComponent(cpnAnalisis)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(60, 60, 60)
+                                .addGap(46, 46, 46)
                                 .addComponent(btnCompilar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
                                 .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addGap(28, 28, 28))
         );
 
@@ -156,60 +160,78 @@ public class Compilador extends javax.swing.JFrame {
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
         String codigoFuente = txtAreaInput.getText();
+
+// 1. Análisis léxico
         AnalizadorLexico analizador = new AnalizadorLexico(codigoFuente);
         analizador.analizar();
 
+// Mostrar tokens
         List<Token> tokens = analizador.getTokens();
         String tabla = formatearTokensComoTabla(tokens);
-        txtAreaAnalisis.setText(tabla); // Mostrar tokens
+        txtAreaAnalisis.setText(tabla);
 
-        List<ErrorLexico> errores = analizador.getErrores();
-        String textoErrores = formatearErroresComoTexto(errores);
-        txtAreaOutput.setText(textoErrores); // Mostrar errores léxicos
+// Mostrar errores léxicos
+        List<ErrorLexico> erroresLexicos = analizador.getErrores();
+        String textoErrores = formatearErroresComoTexto(erroresLexicos);
+        txtAreaOutput.setText(textoErrores);
 
-        // Solo continuar si no hay errores léxicos
-        if (errores.isEmpty()) {
+        if (erroresLexicos.isEmpty()) {
             try {
-                // Cargar gramática desde archivo JSON
-                Map<String, Regla> gramatica = LectorGramatica.cargarDesdeArchivo("src/main/java/com/uni/compilador/analisis/sintactico/gramatica.json");
+                // 2. Cargar gramática y parsear
+                Map<String, Regla> gramatica = LectorGramatica.cargarDesdeArchivo(
+                        "src/main/java/com/uni/compilador/analisis/sintactico/gramatica.json"
+                );
 
                 ParserAST parser = new ParserAST(gramatica, tokens);
                 NodoAST arbol = parser.parse("programa");
 
                 if (arbol != null) {
+                    // Mostrar AST
                     String arbolTexto = ASTPrinter.imprimir(arbol);
-                    txtAreaOutput.append("No se encontraron errores sintacticos.\n");
-                    txtAreaArbol.setText("\n[AST - Arbol de Sintaxis Abstracta]\n");
+                    txtAreaOutput.append("No se encontraron errores sintácticos.\n");
+                    txtAreaArbol.setText("\n[AST - Árbol de Sintaxis Abstracta]\n");
                     txtAreaArbol.append(arbolTexto);
 
-                    //Analizador semantico
-                    try {
-                        AnalizadorSemantico semantico = new AnalizadorSemantico();
-                        semantico.analizar(arbol);
+                    // 3. Análisis semántico
+                    AnalizadorSemantico analizadorSemantico = new AnalizadorSemantico();
+                    analizadorSemantico.analizar(arbol);
 
-                        // Mostrar tabla
-                        txtAreaAnalisis.append("------------------ TABLA DE SIMBOLOS -------------------\n");
-                        txtAreaAnalisis.append(String.format("%-12s %-8s %-10s %-7s %-6s %s\n",
-                                "Nombre", "Tipo", "Categoria", "Alcance", "Linea", "Valor"));
-                        txtAreaAnalisis.append("--------------------------------------------------------\n");
-                        for (EntradaTablaSimbolos entrada : semantico.getTabla()) {
-                            txtAreaAnalisis.append(entrada.toString() + "\n");
-                        }
+                    // Mostrar tabla de símbolos
+                    List<EntradaTablaSimbolos> tablaSimbolos = analizadorSemantico.getTabla();
+                    txtAreaAnalisis.append("\n[TABLA DE SÍMBOLOS]\n");
+                    txtAreaAnalisis.append(String.format("%-12s %-8s %-10s %-7s %-6s %s\n",
+                            "Nombre", "Tipo", "Categoría", "Alcance", "Línea", "Valor"));
+                    txtAreaAnalisis.append("---------------------------------------------------------------\n");
 
-                        // Mostrar errores
-                        if (semantico.getErrores().isEmpty()){
-                            txtAreaOutput.append("No se encontraron errores semanticos.\n");
-                        } else {
-                            for (String error : semantico.getErrores()) {
-                            txtAreaOutput.append("[Error] " + error + "\n");
-                        }
-                        }
-                        
-                    } catch (Exception e) {
-                        System.out.println(e);
+                    for (EntradaTablaSimbolos entrada : tablaSimbolos) {
+                        txtAreaAnalisis.append(entrada.toString() + "\n");
                     }
 
+                    // Mostrar errores semánticos
+                    List<String> erroresSemanticos = analizadorSemantico.getErrores();
+                    if (!erroresSemanticos.isEmpty()) {
+                        txtAreaOutput.append("\n[Errores Semánticos]\n");
+                        for (String err : erroresSemanticos) {
+                            txtAreaOutput.append(err + "\n");
+                        }
+                        // Detener si hay errores semánticos
+                        return;
+                    } else {
+                        txtAreaOutput.append("\nNo se encontraron errores semánticos.\n");
+                    }
+
+                    // 4. Generación de TAC (solo si no hay errores semánticos)
+                    String tac = TacGenerator.generateTAC(codigoFuente);
+                    txtAreaArbol.append("\n[-------- CODIGO TAC GENERADO --------]\n");
+                    txtAreaArbol.append(tac);
+
+                    // Optimización
+                    String tacOptimizado = TacOptimizer.optimize(tac);
+                    txtAreaArbol.append("\n[-------- CODIGO TAC OPTIMIZADO --------]\n");
+                    txtAreaArbol.append(tacOptimizado);
+
                 } else {
+                    // Si hay errores sintácticos
                     StringBuilder sb = new StringBuilder();
                     for (ErrorSintactico error : parser.getErrores()) {
                         sb.append(error.toString()).append("\n");
@@ -219,8 +241,11 @@ public class Compilador extends javax.swing.JFrame {
 
             } catch (Exception e) {
                 txtAreaOutput.setText("Error al cargar la gramática: " + e.getMessage());
+                e.printStackTrace();
             }
         }
+
+
     }//GEN-LAST:event_btnCompilarActionPerformed
 
     private String formatearTokensComoTabla(List<Token> tokens) {
