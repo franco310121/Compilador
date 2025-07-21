@@ -18,6 +18,7 @@ import com.uni.compilador.analisis.sintactico.LectorGramatica;
 import com.uni.compilador.analisis.sintactico.NodoAST;
 import com.uni.compilador.analisis.sintactico.ParserAST;
 import com.uni.compilador.analisis.sintactico.Regla;
+import java.awt.Font;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,10 @@ public class Compilador extends javax.swing.JFrame {
      */
     public Compilador() {
         initComponents();
+
+        Font fuentePersonalizada = FuenteUtil.cargarFuente(12f); // Cambia el tamaño según lo desees
+        FuenteAplicador.aplicarFuente(this.getContentPane(), fuentePersonalizada);
+
     }
 
     /**
