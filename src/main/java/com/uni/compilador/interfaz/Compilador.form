@@ -38,7 +38,7 @@
                               <Component id="cpnOutput" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="btnCompilar" min="-2" pref="116" max="-2" attributes="0"/>
+                              <Component id="btnLexico" min="-2" pref="116" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnSintactico" min="-2" pref="116" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -52,7 +52,7 @@
                               <Component id="btnCodigoObjeto" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="46" max="32767" attributes="0"/>
+                      <EmptySpace pref="44" max="32767" attributes="0"/>
                       <Component id="cpnAnalisis" min="-2" pref="430" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                   </Group>
@@ -74,7 +74,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="btnCompilar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnLexico" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="btnSintactico" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="btnSemantico" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -93,7 +93,7 @@
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace pref="37" max="32767" attributes="0"/>
+              <EmptySpace pref="34" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -164,7 +164,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btnCompilar">
+    <Component class="javax.swing.JButton" name="btnLexico">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="66" green="66" red="66" type="rgb"/>
@@ -175,10 +175,10 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Compilar"/>
+        <Property name="text" type="java.lang.String" value="Lexico"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCompilarActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLexicoActionPerformed"/>
       </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="cpnAnalisis">

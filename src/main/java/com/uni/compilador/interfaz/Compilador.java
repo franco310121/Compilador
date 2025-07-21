@@ -5,6 +5,7 @@
 package com.uni.compilador.interfaz;
 
 import com.uni.compilador.analisis.backend.GeneradorCodigoIntermedio;
+import com.uni.compilador.analisis.backend.NasmGenerator;
 import com.uni.compilador.analisis.backend.TacGenerator;
 import com.uni.compilador.analisis.backend.TacOptimizer;
 import com.uni.compilador.analisis.lexico.AnalizadorLexico;
@@ -18,9 +19,17 @@ import com.uni.compilador.analisis.sintactico.LectorGramatica;
 import com.uni.compilador.analisis.sintactico.NodoAST;
 import com.uni.compilador.analisis.sintactico.ParserAST;
 import com.uni.compilador.analisis.sintactico.Regla;
+import java.awt.Dialog;
 import java.awt.Font;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JDialog;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -53,7 +62,7 @@ public class Compilador extends javax.swing.JFrame {
         txtAreaInput = new javax.swing.JTextArea();
         cpnOutput = new javax.swing.JScrollPane();
         txtAreaOutput = new javax.swing.JTextArea();
-        btnCompilar = new javax.swing.JButton();
+        btnLexico = new javax.swing.JButton();
         cpnAnalisis = new javax.swing.JScrollPane();
         txtAreaAnalisis = new javax.swing.JTextArea();
         cpnArbol = new javax.swing.JScrollPane();
@@ -86,13 +95,13 @@ public class Compilador extends javax.swing.JFrame {
         txtAreaOutput.setRows(5);
         cpnOutput.setViewportView(txtAreaOutput);
 
-        btnCompilar.setBackground(new java.awt.Color(102, 102, 102));
-        btnCompilar.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
-        btnCompilar.setForeground(new java.awt.Color(255, 255, 255));
-        btnCompilar.setText("Compilar");
-        btnCompilar.addActionListener(new java.awt.event.ActionListener() {
+        btnLexico.setBackground(new java.awt.Color(102, 102, 102));
+        btnLexico.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnLexico.setForeground(new java.awt.Color(255, 255, 255));
+        btnLexico.setText("Lexico");
+        btnLexico.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCompilarActionPerformed(evt);
+                btnLexicoActionPerformed(evt);
             }
         });
 
@@ -179,7 +188,7 @@ public class Compilador extends javax.swing.JFrame {
                                 .addComponent(cpnInput, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
                                 .addComponent(cpnOutput))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnLexico, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnSintactico, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -190,7 +199,7 @@ public class Compilador extends javax.swing.JFrame {
                                 .addComponent(btnOptimzado, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(btnCodigoObjeto)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                         .addComponent(cpnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(39, 39, 39)))
                 .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 655, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -208,7 +217,7 @@ public class Compilador extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(btnCompilar)
+                                    .addComponent(btnLexico)
                                     .addComponent(btnSintactico)
                                     .addComponent(btnSemantico))
                                 .addGap(27, 27, 27)
@@ -221,7 +230,7 @@ public class Compilador extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(cpnAnalisis, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         pack();
@@ -235,20 +244,63 @@ public class Compilador extends javax.swing.JFrame {
     AnalizadorSemantico analizadorSemantico;
     String tac;
     String tacOptimizado;
-    
-    private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
+    List<ErrorLexico> erroresLexicos;
+
+    private void btnLexicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLexicoActionPerformed
         codigoFuente = txtAreaInput.getText();
 
         analizador = new AnalizadorLexico(codigoFuente);
         analizador.analizar();
 
         tokens = analizador.getTokens();
-        String tabla = formatearTokensComoTabla(tokens);
 
-        List<ErrorLexico> erroresLexicos = analizador.getErrores();
+        String[] columnas = {"Tipo", "Valor", "Línea", "Columna"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+
+        for (Token token : tokens) {
+            modelo.addRow(new Object[]{
+                token.getTipo(),
+                token.getValor(),
+                token.getLinea(),
+                token.getColumna()
+            });
+        }
+
+        JTable tablaTokens = new JTable(modelo);
+        tablaTokens.setFillsViewportHeight(true);
+
+        JScrollPane scroll = new JScrollPane(tablaTokens);
+
+        Font fuentePersonalizada = FuenteUtil.cargarFuente(12f);
+        FuenteAplicador.aplicarFuente(tablaTokens, fuentePersonalizada);
+        FuenteAplicador.aplicarFuente(scroll, fuentePersonalizada);
+
+        JDialog dialogo = new JDialog(
+                SwingUtilities.getWindowAncestor(this),
+                "Tabla de tokens",
+                Dialog.ModalityType.MODELESS);
+        dialogo.getContentPane().add(scroll);
+        dialogo.setSize(600, 300);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setVisible(true);
+
+        erroresLexicos = analizador.getErrores();
         String textoErrores = formatearErroresComoTexto(erroresLexicos);
         txtAreaOutput.setText(textoErrores);
+    }//GEN-LAST:event_btnLexicoActionPerformed
 
+    private void btnCodigoObjetoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCodigoObjetoActionPerformed
+        NasmGenerator gen = new NasmGenerator();
+        String asm = gen.generate(tacOptimizado);
+        txtAreaAnalisis.setText(asm);
+        try {
+            gen.write(asm, "program.asm");
+        } catch (Exception ex) {
+            Logger.getLogger(Compilador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnCodigoObjetoActionPerformed
+
+    private void btnSintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSintacticoActionPerformed
         if (erroresLexicos.isEmpty()) {
             try {
                 Map<String, Regla> gramatica = LectorGramatica.cargarDesdeArchivo(
@@ -264,40 +316,6 @@ public class Compilador extends javax.swing.JFrame {
                     txtAreaArbol.setText("\n[AST - Árbol de Sintaxis Abstracta]\n");
                     txtAreaArbol.append(arbolTexto);
 
-                    analizadorSemantico = new AnalizadorSemantico();
-                    analizadorSemantico.analizar(arbol);
-
-                    // Mostrar tabla de símbolos
-                    List<EntradaTablaSimbolos> tablaSimbolos = analizadorSemantico.getTabla();
-                    txtAreaAnalisis.append("\n[TABLA DE SÍMBOLOS]\n");
-                    txtAreaAnalisis.append(String.format("%-12s %-8s %-10s %-7s %-6s %s\n",
-                            "Nombre", "Tipo", "Categoría", "Alcance", "Línea", "Valor"));
-                    txtAreaAnalisis.append("---------------------------------------------------------------\n");
-
-                    for (EntradaTablaSimbolos entrada : tablaSimbolos) {
-                        txtAreaAnalisis.append(entrada.toString() + "\n");
-                    }
-
-                    List<String> erroresSemanticos = analizadorSemantico.getErrores();
-                    if (!erroresSemanticos.isEmpty()) {
-                        txtAreaOutput.append("\n[Errores Semánticos]\n");
-                        for (String err : erroresSemanticos) {
-                            txtAreaOutput.append(err + "\n");
-                        }
-
-                        return;
-                    } else {
-                        txtAreaOutput.append("\nNo se encontraron errores semánticos.\n");
-                    }
-
-                    tac = TacGenerator.generateTAC(codigoFuente);
-                    txtAreaArbol.append("\n[-------- CODIGO TAC GENERADO --------]\n");
-                    txtAreaArbol.append(tac);
-
-                    tacOptimizado = TacOptimizer.optimize(tac);
-                    txtAreaArbol.append("\n[-------- CODIGO TAC OPTIMIZADO --------]\n");
-                    txtAreaArbol.append(tacOptimizado);
-
                 } else {
                     // Si hay errores sintácticos
                     StringBuilder sb = new StringBuilder();
@@ -312,28 +330,69 @@ public class Compilador extends javax.swing.JFrame {
                 e.printStackTrace();
             }
         }
-
-
-    }//GEN-LAST:event_btnCompilarActionPerformed
-
-    private void btnCodigoObjetoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCodigoObjetoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCodigoObjetoActionPerformed
-
-    private void btnSintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSintacticoActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnSintacticoActionPerformed
 
     private void btnSemanticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSemanticoActionPerformed
-        // TODO add your handling code here:
+        analizadorSemantico = new AnalizadorSemantico();
+        analizadorSemantico.analizar(arbol);
+
+        List<EntradaTablaSimbolos> tablaSimbolos = analizadorSemantico.getTabla();
+
+        String[] columnas = {"Nombre", "Tipo", "Categoría", "Alcance", "Línea", "Valor"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+
+        for (EntradaTablaSimbolos entrada : tablaSimbolos) {
+            modelo.addRow(new Object[]{
+                entrada.getNombre(),
+                entrada.getTipo(),
+                entrada.getCategoria(),
+                entrada.getAlcance(),
+                entrada.getLinea(),
+                entrada.getValor()
+            });
+        }
+
+        JTable tabla = new JTable(modelo);
+        tabla.setFillsViewportHeight(true);
+
+        JScrollPane scroll = new JScrollPane(tabla);
+
+        // Aplicar fuente personalizada a la tabla
+        Font fuentePersonalizada = FuenteUtil.cargarFuente(12f);
+        FuenteAplicador.aplicarFuente(tabla, fuentePersonalizada);
+        FuenteAplicador.aplicarFuente(scroll, fuentePersonalizada);
+
+        JDialog dialogo = new JDialog(
+                SwingUtilities.getWindowAncestor(this),
+                "Tabla de símbolos",
+                Dialog.ModalityType.MODELESS);
+        dialogo.getContentPane().add(scroll);
+        dialogo.setSize(700, 300);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setVisible(true);
+
+        List<String> erroresSemanticos = analizadorSemantico.getErrores();
+        if (!erroresSemanticos.isEmpty()) {
+            txtAreaOutput.append("\n[Errores Semánticos]\n");
+            for (String err : erroresSemanticos) {
+                txtAreaOutput.append(err + "\n");
+            }
+            return;
+        } else {
+            txtAreaOutput.append("No se encontraron errores semánticos.\n");
+        }
     }//GEN-LAST:event_btnSemanticoActionPerformed
 
     private void btnOptimzadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOptimzadoActionPerformed
-        // TODO add your handling code here:
+        tacOptimizado = TacOptimizer.optimize(tac);
+        txtAreaAnalisis.append("\n[-------- CODIGO TAC OPTIMIZADO --------]\n");
+        txtAreaAnalisis.append(tacOptimizado);
     }//GEN-LAST:event_btnOptimzadoActionPerformed
 
     private void btnIntermedioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIntermedioActionPerformed
-        // TODO add your handling code here:
+        tac = TacGenerator.generateTAC(codigoFuente);
+        txtAreaAnalisis.append("\n[-------- CODIGO TAC GENERADO --------]\n");
+        txtAreaAnalisis.append(tac);
     }//GEN-LAST:event_btnIntermedioActionPerformed
 
     private String formatearTokensComoTabla(List<Token> tokens) {
@@ -402,8 +461,8 @@ public class Compilador extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCodigoObjeto;
-    private javax.swing.JButton btnCompilar;
     private javax.swing.JButton btnIntermedio;
+    private javax.swing.JButton btnLexico;
     private javax.swing.JButton btnOptimzado;
     private javax.swing.JButton btnSemantico;
     private javax.swing.JButton btnSintactico;

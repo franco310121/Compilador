@@ -10,7 +10,7 @@ public class VentanaPrincipal extends JFrame{
         setContentPane(panelForm.getContentPane());
         setTitle("Compilador");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1310, 900);
+        setSize(1592, 800);
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);
