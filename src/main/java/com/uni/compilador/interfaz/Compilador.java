@@ -58,6 +58,11 @@ public class Compilador extends javax.swing.JFrame {
         txtAreaAnalisis = new javax.swing.JTextArea();
         cpnArbol = new javax.swing.JScrollPane();
         txtAreaArbol = new javax.swing.JTextArea();
+        btnCodigoObjeto = new javax.swing.JButton();
+        btnSintactico = new javax.swing.JButton();
+        btnSemantico = new javax.swing.JButton();
+        btnOptimzado = new javax.swing.JButton();
+        btnIntermedio = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,98 +112,159 @@ public class Compilador extends javax.swing.JFrame {
         txtAreaArbol.setRows(5);
         cpnArbol.setViewportView(txtAreaArbol);
 
+        btnCodigoObjeto.setBackground(new java.awt.Color(102, 102, 102));
+        btnCodigoObjeto.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnCodigoObjeto.setForeground(new java.awt.Color(255, 255, 255));
+        btnCodigoObjeto.setText(" Cod. Objeto");
+        btnCodigoObjeto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCodigoObjetoActionPerformed(evt);
+            }
+        });
+
+        btnSintactico.setBackground(new java.awt.Color(102, 102, 102));
+        btnSintactico.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnSintactico.setForeground(new java.awt.Color(255, 255, 255));
+        btnSintactico.setText("Sintactico");
+        btnSintactico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSintacticoActionPerformed(evt);
+            }
+        });
+
+        btnSemantico.setBackground(new java.awt.Color(102, 102, 102));
+        btnSemantico.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnSemantico.setForeground(new java.awt.Color(255, 255, 255));
+        btnSemantico.setText("Semantico");
+        btnSemantico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSemanticoActionPerformed(evt);
+            }
+        });
+
+        btnOptimzado.setBackground(new java.awt.Color(102, 102, 102));
+        btnOptimzado.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnOptimzado.setForeground(new java.awt.Color(255, 255, 255));
+        btnOptimzado.setText("Optimizado");
+        btnOptimzado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOptimzadoActionPerformed(evt);
+            }
+        });
+
+        btnIntermedio.setBackground(new java.awt.Color(102, 102, 102));
+        btnIntermedio.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        btnIntermedio.setForeground(new java.awt.Color(255, 255, 255));
+        btnIntermedio.setText("Intermedio");
+        btnIntermedio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIntermedioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(313, 313, 313)
+                        .addGap(285, 285, 285)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(cpnInput, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+                                .addComponent(cpnOutput))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(28, 28, 28)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(cpnInput, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
-                                        .addGap(15, 15, 15))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnSintactico, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnSemantico, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(cpnOutput)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                                .addComponent(btnIntermedio, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnOptimzado, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCodigoObjeto)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                         .addComponent(cpnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)))
-                .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39)))
+                .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 655, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 675, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(27, Short.MAX_VALUE)
-                        .addComponent(cpnArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 828, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(52, 52, 52)
                         .addComponent(jLabel1)
                         .addGap(53, 53, 53)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cpnAnalisis)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(46, 46, 46)
-                                .addComponent(btnCompilar)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnCompilar)
+                                    .addComponent(btnSintactico)
+                                    .addComponent(btnSemantico))
+                                .addGap(27, 27, 27)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnCodigoObjeto)
+                                    .addComponent(btnIntermedio)
+                                    .addComponent(btnOptimzado))
                                 .addGap(18, 18, 18)
-                                .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                .addGap(28, 28, 28))
+                                .addComponent(cpnInput, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(cpnOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cpnAnalisis, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    String codigoFuente;
+    AnalizadorLexico analizador;
+    List<Token> tokens;
+    ParserAST parser;
+    NodoAST arbol;
+    AnalizadorSemantico analizadorSemantico;
+    String tac;
+    String tacOptimizado;
+    
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
-        String codigoFuente = txtAreaInput.getText();
+        codigoFuente = txtAreaInput.getText();
 
-// 1. Análisis léxico
-        AnalizadorLexico analizador = new AnalizadorLexico(codigoFuente);
+        analizador = new AnalizadorLexico(codigoFuente);
         analizador.analizar();
 
-// Mostrar tokens
-        List<Token> tokens = analizador.getTokens();
+        tokens = analizador.getTokens();
         String tabla = formatearTokensComoTabla(tokens);
-        txtAreaAnalisis.setText(tabla);
 
-// Mostrar errores léxicos
         List<ErrorLexico> erroresLexicos = analizador.getErrores();
         String textoErrores = formatearErroresComoTexto(erroresLexicos);
         txtAreaOutput.setText(textoErrores);
 
         if (erroresLexicos.isEmpty()) {
             try {
-                // 2. Cargar gramática y parsear
                 Map<String, Regla> gramatica = LectorGramatica.cargarDesdeArchivo(
                         "src/main/java/com/uni/compilador/analisis/sintactico/gramatica.json"
                 );
 
-                ParserAST parser = new ParserAST(gramatica, tokens);
-                NodoAST arbol = parser.parse("programa");
+                parser = new ParserAST(gramatica, tokens);
+                arbol = parser.parse("programa");
 
                 if (arbol != null) {
-                    // Mostrar AST
                     String arbolTexto = ASTPrinter.imprimir(arbol);
                     txtAreaOutput.append("No se encontraron errores sintácticos.\n");
                     txtAreaArbol.setText("\n[AST - Árbol de Sintaxis Abstracta]\n");
                     txtAreaArbol.append(arbolTexto);
 
-                    // 3. Análisis semántico
-                    AnalizadorSemantico analizadorSemantico = new AnalizadorSemantico();
+                    analizadorSemantico = new AnalizadorSemantico();
                     analizadorSemantico.analizar(arbol);
 
                     // Mostrar tabla de símbolos
@@ -212,26 +278,23 @@ public class Compilador extends javax.swing.JFrame {
                         txtAreaAnalisis.append(entrada.toString() + "\n");
                     }
 
-                    // Mostrar errores semánticos
                     List<String> erroresSemanticos = analizadorSemantico.getErrores();
                     if (!erroresSemanticos.isEmpty()) {
                         txtAreaOutput.append("\n[Errores Semánticos]\n");
                         for (String err : erroresSemanticos) {
                             txtAreaOutput.append(err + "\n");
                         }
-                        // Detener si hay errores semánticos
+
                         return;
                     } else {
                         txtAreaOutput.append("\nNo se encontraron errores semánticos.\n");
                     }
 
-                    // 4. Generación de TAC (solo si no hay errores semánticos)
-                    String tac = TacGenerator.generateTAC(codigoFuente);
+                    tac = TacGenerator.generateTAC(codigoFuente);
                     txtAreaArbol.append("\n[-------- CODIGO TAC GENERADO --------]\n");
                     txtAreaArbol.append(tac);
 
-                    // Optimización
-                    String tacOptimizado = TacOptimizer.optimize(tac);
+                    tacOptimizado = TacOptimizer.optimize(tac);
                     txtAreaArbol.append("\n[-------- CODIGO TAC OPTIMIZADO --------]\n");
                     txtAreaArbol.append(tacOptimizado);
 
@@ -252,6 +315,26 @@ public class Compilador extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_btnCompilarActionPerformed
+
+    private void btnCodigoObjetoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCodigoObjetoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCodigoObjetoActionPerformed
+
+    private void btnSintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSintacticoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSintacticoActionPerformed
+
+    private void btnSemanticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSemanticoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSemanticoActionPerformed
+
+    private void btnOptimzadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOptimzadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnOptimzadoActionPerformed
+
+    private void btnIntermedioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIntermedioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnIntermedioActionPerformed
 
     private String formatearTokensComoTabla(List<Token> tokens) {
         StringBuilder sb = new StringBuilder();
@@ -318,7 +401,12 @@ public class Compilador extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCodigoObjeto;
     private javax.swing.JButton btnCompilar;
+    private javax.swing.JButton btnIntermedio;
+    private javax.swing.JButton btnOptimzado;
+    private javax.swing.JButton btnSemantico;
+    private javax.swing.JButton btnSintactico;
     private javax.swing.JScrollPane cpnAnalisis;
     private javax.swing.JScrollPane cpnArbol;
     private javax.swing.JScrollPane cpnInput;
